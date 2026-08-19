@@ -19,7 +19,8 @@ phi = 4/pi = 1.2732...      alpha = pi/4 = 0.7854...      phi x alpha = 1
 
 `phi` is the circle-square ratio taken from Da Vinci's Vitruvian Man — hence the rename.
 It scales the recurrent weight path; its reciprocal dual `alpha` scales the input
-projection. The claim is that this proportion, applied as a fixed scalar with no gates,
+projection. The geometry it comes from is set out in
+[`docs/foundations/`](./docs/foundations), written a year before any of the code. The claim is that this proportion, applied as a fixed scalar with no gates,
 normalization or constraint machinery, holds gradients stable across sequences of
 arbitrary length. The reported result is LSTM-class performance at roughly 4x fewer
 parameters, stable to 15,000 timesteps under full BPTT.
@@ -33,6 +34,7 @@ keeps circling. It is not settled here, and the documents say so.
 |---|---|
 | [`notebooks/`](./notebooks) | 96 Google Colab notebooks. See [`notebooks/INDEX.md`](./notebooks/INDEX.md) for a grouped index. |
 | [`runs/dppu_vru/`](./runs/dppu_vru) | Training logs, checkpoints and metadata for runs **v17–v23**. |
+| [`docs/foundations/`](./docs/foundations) | The January 2025 origin papers — where `phi` and `pi_dyn` come from. |
 | [`docs/vru-architecture/`](./docs/vru-architecture) | The core research series — what the architecture is and why it works. |
 | [`docs/vru-trading-bot/`](./docs/vru-trading-bot) | A complete six-part series applying it to markets. |
 | [`raw/`](./raw) | Verbatim source dumps that are not notebooks. |
@@ -41,6 +43,60 @@ keeps circling. It is not settled here, and the documents say so.
 
 Two **separate** numbered series live here. Both have a document 6, which is why they sit
 in different folders.
+
+### `docs/foundations/` — the origin papers (January 2025)
+
+Five documents from **January 2025**, fourteen months before the architecture work. This
+is where the constants come from, and they answer the question the later documents leave
+open.
+
+| Document | Date |
+|---|---|
+| Dynamic Pi Transformation | 29 Jan 2025 |
+| Dynamic Phi Transformation | 30 Jan 2025 |
+| Unified Master Equation for pi-dynamic and phi-dynamic | 30 Jan 2025 |
+| LaTeX Formulas for Major Equations | 30 Jan 2025 |
+| Dimensional Math — Symbol Glossary | undated |
+
+*Dynamic Pi Transformation* is the origin. Taking Da Vinci's Vitruvian Man, it posits two
+centres rather than one — a physical centre at the stomach and a perceptual centre in the
+mind — and a folding factor `Δ` shifting between them. From that dual-centre model it
+argues that `pi` should be treated as a function rather than a fixed constant, approaching
+4 under folding, which is the sense in which the circle gets squared. *Dynamic Phi*
+(co-authored with Mary Elizabeth Gaynor) applies the same move to the golden ratio, and
+the *Master Equation* combines them as `Ω(Δ) = pi_dynamic · phi_dynamic`.
+
+**These are speculative theoretical papers, not peer-reviewed results.** They propose
+modifications to the Schwarzschild radius, Bekenstein-Hawking entropy, the Einstein
+lensing radius and the Schrödinger equation. The archive presents them as the recorded
+origin of the idea; the empirical claims elsewhere in this repository stand on their own
+experiments, not on these.
+
+**Where they connect to the code.** The operators in `raw/HZ.txt` are these equations,
+literally:
+
+| Paper | Code (`raw/HZ.txt`) |
+|---|---|
+| `pi_dynamic = 4 - (4 - pi)e^(-Δ)` | `def pi_dyn(delta): return 4.0 - (4.0 - PI_CL) * torch.exp(-delta)` |
+| `Ω(Δ) = pi_dynamic · phi_dynamic` | `def omega(delta): return (pi_dyn(delta) * phi_dyn(delta)) / (1.0 + delta + EPS)` |
+
+**One discrepancy worth naming.** The `phi` of these papers is the *classical golden
+ratio*, 1.618. The `phi` of the VRU architecture is `4/pi`, 1.273. Same letter, different
+number — and reading the two bodies of work together, this is the easiest thing to trip
+over.
+
+The code bridges them explicitly, in one line:
+
+```python
+DELTA_STAR = math.log((1.6180 - 1.0) / (PHI_CL - 1.0))    # = 0.81614
+```
+
+Under the dynamic-phi form `f(Δ) = 1 + (C - 1)e^(-Δ)`, starting from the classical golden
+ratio `C = 1.618`, the value at `Δ = DELTA_STAR` is `4/pi` exactly — it reproduces to
+machine precision. `DELTA_STAR` is the folding factor at which the golden ratio's own
+curve passes through the architecture's constant. Whether that is derivation or
+coincidence is left to the reader; the archive records that the two are connected in the
+source by a single line, and that the later documents never revisit it.
 
 ### `docs/vru-architecture/` — the core research
 
@@ -172,9 +228,16 @@ in, at "Stage 1: single-digit no carry".
 
 Partial upload; further batches of source material are still to come.
 
+- `docs/foundations/` — five origin papers
 - `docs/vru-trading-bot/` — complete (1–6)
 - `docs/vru-architecture/` — documents 5–9 of 9; **1–4 not yet uploaded**, and a
   document 10 (VRU v11 scratchpad results) is named as planned but not yet written
+
+## Authorship
+
+Work by **Dylan Michael Scott** (Horizon Tech), per the bylines on Document 9 and the
+January 2025 foundation papers. *Dynamic Phi Transformation* and the *Unified Master
+Equation* additionally credit **Mary Elizabeth Gaynor** as co-author.
 
 ## License
 
