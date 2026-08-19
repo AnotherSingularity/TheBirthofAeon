@@ -1,0 +1,87 @@
+
+==============================================================
+  DPPU-VRU v22  |  DUAL HEMISPHERE + AGREEMENT GATE
+  device=cuda
+  DUAL params=772,771  |  Vanilla params=161,249
+
+  Left hemisphere  -- independent DPPU stream
+  Right hemisphere -- independent DPPU stream
+  Agreement gate   -- fires when both streams align
+  Focus layer      -- arbitrates, outputs when agreed
+
+  Format: ones->carry->tens->ans (v21 proven)
+  Left anchor and Right anchor both free
+==============================================================
+
+==============================================================
+  DPPU-VRU v22  |  DUAL HEMISPHERE + AGREEMENT GATE
+  device=cuda
+  DUAL params=200,511  |  Vanilla params=46,849
+
+  Left hemisphere  -- independent DPPU stream
+  Right hemisphere -- independent DPPU stream
+  Agreement gate   -- fires when both streams align
+  Focus layer      -- arbitrates, outputs when agreed
+
+  Format: ones->carry->tens->ans (v21 proven)
+  Left anchor and Right anchor both free
+==============================================================
+
+==============================================================
+  DPPU-VRU v22  |  DUAL HEMISPHERE + AGREEMENT GATE
+  device=cuda
+  DUAL params=200,511  |  Vanilla params=46,849
+
+  Left hemisphere  -- independent DPPU stream
+  Right hemisphere -- independent DPPU stream
+  Agreement gate   -- fires when both streams align
+  Focus layer      -- arbitrates, outputs when agreed
+
+  Format: ones->carry->tens->ans (v21 proven)
+  Left anchor and Right anchor both free
+==============================================================
+
+==============================================================
+  DPPU-VRU v22  |  DUAL HEMISPHERE + AGREEMENT GATE
+  device=cuda
+  DUAL params=200,511  |  Vanilla params=46,849
+
+  Left hemisphere  -- independent DPPU stream
+  Right hemisphere -- independent DPPU stream
+  Agreement gate   -- fires when both streams align
+  Focus layer      -- arbitrates, outputs when agreed
+  Probe shows: dual | left-only | right-only | vanilla
+
+  Format: ones->carry->tens->ans (v21 proven)
+  Both anchors free -- no regularization
+==============================================================
+
+==============================================================
+  DPPU-VRU v22  |  DUAL HEMISPHERE + AGREEMENT GATE
+  device=cuda
+  DUAL params=200,511  |  Vanilla params=46,849
+
+  Left hemisphere  -- independent DPPU stream
+  Right hemisphere -- independent DPPU stream
+  Agreement gate   -- fires when both streams align
+  Focus layer      -- arbitrates, outputs when agreed
+  Probe: dual | left-only | right-only | vanilla
+
+  Format: ones->carry->tens->ans (v21 proven)
+  Both anchors free -- no regularization
+==============================================================
+
+==============================================================
+  DPPU-VRU v22  |  DUAL HEMISPHERE + AGREEMENT GATE
+  device=cuda
+  DUAL params=149,681  |  Vanilla params=46,849
+
+  Left hemisphere  -- independent DPPU stream
+  Right hemisphere -- independent DPPU stream
+  Agreement gate   -- fires when both streams align
+  Focus layer      -- arbitrates, outputs when agreed
+  Probe: dual | left-only | right-only | vanilla
+
+  Format: ones->carry->tens->ans (v21 proven)
+  Both anchors free -- no regularization
+==============================================================

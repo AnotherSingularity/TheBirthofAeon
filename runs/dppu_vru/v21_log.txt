@@ -1,0 +1,300 @@
+
+==============================================================
+  DPPU-VRU v21  |  TEACH THE PROCESS
+  device=cuda
+  DPPU params=229,890  |  Vanilla params=161,249
+
+  Example training sequence:
+  INPUT:  21+43=
+  TARGET: ones:4,carry:0,tens:6,ans:64
+
+  Model must predict: ones -> carry -> tens -> answer
+  Not just the answer. The whole process.
+==============================================================
+step=   200 | DPPU  loss=0.6128 acc=82.4%  anchor=1.2742 | VANILLA  loss=0.5942 acc=82.9% | tf=0.814
+step=   400 | DPPU  loss=0.4373 acc=86.1%  anchor=1.2552 | VANILLA  loss=0.4047 acc=86.0% | tf=0.737
+step=   600 | DPPU  loss=0.4279 acc=84.9%  anchor=1.2815 | VANILLA  loss=0.3792 acc=86.9% | tf=0.667
+step=   800 | DPPU  loss=0.4109 acc=85.6%  anchor=1.2838 | VANILLA  loss=0.4251 acc=85.9% | tf=0.603
+step=  1000 | DPPU  loss=0.5200 acc=84.0%  anchor=1.2909 | VANILLA  loss=0.4101 acc=85.7% | tf=0.546
+step=  1200 | DPPU  loss=0.4543 acc=84.7%  anchor=1.2932 | VANILLA  loss=0.4180 acc=85.6% | tf=0.494
+
+==============================================================
+  DPPU-VRU v21  |  TEACH THE PROCESS
+  device=cuda
+  DPPU params=229,890  |  Vanilla params=161,249
+
+  Example training sequence:
+  INPUT:  75+47=
+  TARGET: ones:12,carry:1,tens:12,ans:122
+
+  Model must predict: ones -> carry -> tens -> answer
+  Not just the answer. The whole process.
+==============================================================
+step=   200 | DPPU  loss=0.5953 acc=82.6%  anchor=1.3088 | VANILLA  loss=0.6046 acc=82.7% | tf=0.814
+step=   400 | DPPU  loss=0.3980 acc=86.9%  anchor=1.3312 | VANILLA  loss=0.3952 acc=86.4% | tf=0.737
+step=   600 | DPPU  loss=0.4168 acc=86.2%  anchor=1.3399 | VANILLA  loss=0.3838 acc=86.9% | tf=0.667
+step=   800 | DPPU  loss=0.4088 acc=86.1%  anchor=1.3402 | VANILLA  loss=0.4049 acc=86.2% | tf=0.603
+step=  1000 | DPPU  loss=0.4493 acc=85.2%  anchor=1.3386 | VANILLA  loss=0.4008 acc=86.3% | tf=0.546
+
+==============================================================
+  DPPU-VRU v21  |  TEACH THE PROCESS
+  device=cuda
+  DPPU params=229,890  |  Vanilla params=161,249
+
+  Example training sequence:
+  INPUT:  98+64=
+  TARGET: ones:12,carry:1,tens:16,ans:162
+
+  Model must predict: ones -> carry -> tens -> answer
+  Not just the answer. The whole process.
+==============================================================
+
+==============================================================
+  DPPU-VRU v21  |  TEACH THE PROCESS
+  device=cuda
+  DPPU params=229,890  |  Vanilla params=161,249
+
+  Example training sequence:
+  INPUT:  94+71=
+  TARGET: ones:5,carry:0,tens:16,ans:165
+
+  Model must predict: ones -> carry -> tens -> answer
+  Not just the answer. The whole process.
+==============================================================
+step=   200 | DPPU  loss=0.6081 acc=82.0%  anchor=1.2906 | VANILLA  loss=0.5886 acc=83.1% | tf=0.814
+step=   400 | DPPU  loss=0.3996 acc=86.6%  anchor=1.2896 | VANILLA  loss=0.3889 acc=86.9% | tf=0.737
+step=   600 | DPPU  loss=0.4440 acc=85.6%  anchor=1.3101 | VANILLA  loss=0.3867 acc=86.8% | tf=0.667
+step=   800 | DPPU  loss=0.4192 acc=86.0%  anchor=1.3120 | VANILLA  loss=0.4153 acc=86.1% | tf=0.603
+step=  1000 | DPPU  loss=0.4317 acc=85.3%  anchor=1.3117 | VANILLA  loss=0.3995 acc=86.1% | tf=0.546
+step=  1200 | DPPU  loss=0.4487 acc=84.6%  anchor=1.3140 | VANILLA  loss=0.4509 acc=84.9% | tf=0.494
+step=  1400 | DPPU  loss=0.5103 acc=83.4%  anchor=1.3088 | VANILLA  loss=0.4605 acc=84.4% | tf=0.447
+step=  1600 | DPPU  loss=0.5314 acc=82.2%  anchor=1.3077 | VANILLA  loss=0.4644 acc=83.9% | tf=0.404
+step=  1800 | DPPU  loss=0.5413 acc=81.9%  anchor=1.3070 | VANILLA  loss=0.4828 acc=83.3% | tf=0.366
+step=  2000 | DPPU  loss=0.5577 acc=81.2%  anchor=1.3128 | VANILLA  loss=0.4802 acc=83.5% | tf=0.331
+
+  PROBE step=2000  anchor=1.312800
+  PROBLEM      TARGET DPPU OUTPUT                  VANILLA OUTPUT               ANS
+  -------------------------------------------------------------------------------------
+  12+34=       46     ✗ ones:1,carry:0,tens:1,,ans:100 ✗ ones:1,carry:0,tens:1,,ans:100
+  55+27=       82     ✗ ones:1,carry:0,tens:1,,ans:100 ✗ ones:1,carry:0,tens:1,,ans:100
+  73+18=       91     ✗ ones:1,carry:0,tens:1,,ans:100 ✗ ones:1,carry:0,tens:1,,ans:100
+  99+11=       110    ✗ ones:1,carry:0,tens:1,,ans:100 ✗ ones:1,carry:0,tens:1,,ans:100
+  64+36=       100    ✓ ones:1,carry:0,tens:1,,ans:100 ✓ ones:1,carry:0,tens:1,,ans:100
+
+  DPPU: 1/5 correct answers    VANILLA: 1/5 correct answers
+
+step=  2200 | DPPU  loss=0.6955 acc=78.1%  anchor=1.3474 | VANILLA  loss=0.4958 acc=82.8% | tf=0.300
+step=  2400 | DPPU  loss=0.6975 acc=77.6%  anchor=1.3368 | VANILLA  loss=0.5525 acc=81.1% | tf=0.271
+step=  2600 | DPPU  loss=0.6370 acc=78.0%  anchor=1.3397 | VANILLA  loss=0.5439 acc=81.0% | tf=0.245
+step=  2800 | DPPU  loss=0.6682 acc=76.4%  anchor=1.3443 | VANILLA  loss=0.6955 acc=76.7% | tf=0.222
+step=  3000 | DPPU  loss=0.8193 acc=71.5%  anchor=1.3325 | VANILLA  loss=0.6751 acc=76.4% | tf=0.201
+step=  3200 | DPPU  loss=0.8265 acc=71.2%  anchor=1.3440 | VANILLA  loss=0.6402 acc=76.9% | tf=0.182
+
+==============================================================
+  DPPU-VRU v21  |  TEACH THE PROCESS
+  device=cuda
+  DPPU params=229,890  |  Vanilla params=161,249
+
+  Example training sequence:
+  INPUT:  84+28=
+  TARGET: ones:12,carry:1,tens:11,ans:112
+
+  Model must predict: ones -> carry -> tens -> answer
+  Not just the answer. The whole process.
+==============================================================
+
+==============================================================
+  DPPU-VRU v21  |  TEACH THE PROCESS
+  device=cuda
+  DPPU params=229,890  |  Vanilla params=161,249
+
+  Example training sequence:
+  INPUT:  54+34=
+  TARGET: ones:8,carry:0,tens:8,ans:88
+
+  Model must predict: ones -> carry -> tens -> answer
+  Not just the answer. The whole process.
+==============================================================
+step=   200 | DPPU  loss=0.5941 acc=82.4%  anchor=1.2478 | VANILLA  loss=0.5939 acc=83.0% | tf=0.865
+step=   400 | DPPU  loss=0.4071 acc=86.0%  anchor=1.2320 | VANILLA  loss=0.3711 acc=87.4% | tf=0.831
+step=   600 | DPPU  loss=0.3561 acc=87.8%  anchor=1.2344 | VANILLA  loss=0.3549 acc=87.7% | tf=0.798
+step=   800 | DPPU  loss=0.3847 acc=87.3%  anchor=1.2285 | VANILLA  loss=0.3350 acc=88.5% | tf=0.767
+step=  1000 | DPPU  loss=0.3758 acc=87.6%  anchor=1.2263 | VANILLA  loss=0.3151 acc=89.1% | tf=0.737
+step=  1200 | DPPU  loss=0.3789 acc=87.1%  anchor=1.2148 | VANILLA  loss=0.3073 acc=89.4% | tf=0.708
+step=  1400 | DPPU  loss=0.3846 acc=87.0%  anchor=1.2178 | VANILLA  loss=0.3203 acc=89.0% | tf=0.680
+step=  1600 | DPPU  loss=0.3911 acc=86.8%  anchor=1.2185 | VANILLA  loss=0.3185 acc=89.1% | tf=0.654
+step=  1800 | DPPU  loss=0.3905 acc=86.6%  anchor=1.2158 | VANILLA  loss=0.3201 acc=88.9% | tf=0.628
+step=  2000 | DPPU  loss=0.4073 acc=86.4%  anchor=1.2171 | VANILLA  loss=0.3481 acc=88.3% | tf=0.603
+
+  PROBE step=2000  anchor=1.217139
+  PROBLEM      TARGET DPPU OUTPUT                  VANILLA OUTPUT               ANS
+  -------------------------------------------------------------------------------------
+  12+34=       46     ✗ ones:1,carry:0,tens:10,ans:105 ✗ ones:5,carry:0,tens:1,ans:85
+  55+27=       82     ✗ ones:1,carry:0,tens:10,ans:105 ✗ ones:13,carry:1,tens:1,ans:85
+  73+18=       91     ✗ ones:1,carry:0,tens:10,ans:105 ✗ ones:13,carry:1,tens:1,ans:85
+  99+11=       110    ✗ ones:1,carry:0,tens:10,ans:105 ✗ ones:1,,carry:1,tens:1,ans:85
+  64+36=       100    ✗ ones:1,carry:0,tens:10,ans:105 ✗ ones:1,,carry:1,tens:1,ans:85
+
+  DPPU: 0/5 correct answers    VANILLA: 0/5 correct answers
+
+step=  2200 | DPPU  loss=0.4664 acc=85.1%  anchor=1.2640 | VANILLA  loss=0.3435 acc=88.0% | tf=0.580
+step=  2400 | DPPU  loss=0.4248 acc=85.6%  anchor=1.2627 | VANILLA  loss=0.3459 acc=88.0% | tf=0.557
+step=  2600 | DPPU  loss=0.4195 acc=85.7%  anchor=1.2648 | VANILLA  loss=0.3555 acc=87.6% | tf=0.535
+step=  2800 | DPPU  loss=0.4343 acc=85.2%  anchor=1.2651 | VANILLA  loss=0.3649 acc=87.4% | tf=0.514
+step=  3000 | DPPU  loss=0.4356 acc=85.2%  anchor=1.2669 | VANILLA  loss=0.3805 acc=86.9% | tf=0.494
+step=  3200 | DPPU  loss=0.4753 acc=84.0%  anchor=1.2644 | VANILLA  loss=0.3826 acc=86.7% | tf=0.475
+step=  3400 | DPPU  loss=0.4854 acc=83.8%  anchor=1.2604 | VANILLA  loss=0.3880 acc=86.6% | tf=0.456
+step=  3600 | DPPU  loss=0.4845 acc=83.8%  anchor=1.2644 | VANILLA  loss=0.3911 acc=86.4% | tf=0.438
+step=  3800 | DPPU  loss=0.5009 acc=82.9%  anchor=1.2592 | VANILLA  loss=0.4072 acc=85.8% | tf=0.421
+step=  4000 | DPPU  loss=0.6102 acc=81.0%  anchor=1.2649 | VANILLA  loss=0.4193 acc=85.4% | tf=0.404
+
+  PROBE step=4000  anchor=1.264910
+  PROBLEM      TARGET DPPU OUTPUT                  VANILLA OUTPUT               ANS
+  -------------------------------------------------------------------------------------
+  12+34=       46     ✗ ones:1,,carry:1,tens:1,,ans:10 ✗ ones:6,carry:0,tens:1,,ans:105
+  55+27=       82     ✗ ones:1,,carry:1,tens:1,,ans:10 ✗ ones:1,carry:0,tens:1,,ans:105
+  73+18=       91     ✗ ones:1,,carry:1,tens:1,,ans:10 ✗ ones:1,carry:0,tens:1,,ans:105
+  99+11=       110    ✗ ones:1,,carry:1,tens:1,,ans:10 ✗ ones:1,carry:0,tens:1,,ans:105
+  64+36=       100    ✗ ones:1,,carry:1,tens:1,,ans:10 ✗ ones:1,carry:0,tens:1,,ans:105
+
+  DPPU: 0/5 correct answers    VANILLA: 0/5 correct answers
+
+step=  4200 | DPPU  loss=0.5095 acc=82.6%  anchor=1.2832 | VANILLA  loss=0.4504 acc=84.6% | tf=0.389
+step=  4400 | DPPU  loss=0.5215 acc=82.5%  anchor=1.2779 | VANILLA  loss=0.4371 acc=84.8% | tf=0.373
+step=  4600 | DPPU  loss=0.5169 acc=82.2%  anchor=1.2808 | VANILLA  loss=0.4479 acc=84.6% | tf=0.359
+step=  4800 | DPPU  loss=0.5417 acc=81.7%  anchor=1.2796 | VANILLA  loss=0.4882 acc=83.5% | tf=0.345
+step=  5000 | DPPU  loss=0.6125 acc=79.9%  anchor=1.3164 | VANILLA  loss=0.4948 acc=83.1% | tf=0.331
+step=  5200 | DPPU  loss=0.5910 acc=79.8%  anchor=1.3335 | VANILLA  loss=0.4793 acc=83.7% | tf=0.318
+step=  5400 | DPPU  loss=0.5983 acc=79.7%  anchor=1.3462 | VANILLA  loss=0.5182 acc=82.1% | tf=0.306
+step=  5600 | DPPU  loss=0.6510 acc=78.1%  anchor=1.3494 | VANILLA  loss=0.5184 acc=82.1% | tf=0.294
+step=  5800 | DPPU  loss=0.6801 acc=77.7%  anchor=1.3518 | VANILLA  loss=0.4953 acc=82.9% | tf=0.282
+step=  6000 | DPPU  loss=0.6296 acc=79.4%  anchor=1.3629 | VANILLA  loss=0.5360 acc=81.5% | tf=0.271
+
+  PROBE step=6000  anchor=1.362936
+  PROBLEM      TARGET DPPU OUTPUT                  VANILLA OUTPUT               ANS
+  -------------------------------------------------------------------------------------
+  12+34=       46     ✗ ones:1,carry:0,tens:1,,ans:120 ✗ ones:1,carry:0,tens:1,,ans:124
+  55+27=       82     ✗ ones:1,carry:0,tens:1,,ans:120 ✗ ones:14,carry:1,tens:1,,ans:12
+  73+18=       91     ✗ ones:1,carry:0,tens:1,,ans:120 ✗ ones:1,,carry:1,tens:1,,ans:12
+  99+11=       110    ✗ ones:1,carry:0,tens:1,,ans:120 ✗ ones:1,,carry:1,tens:1,,ans:12
+  64+36=       100    ✗ ones:1,carry:0,tens:1,,ans:120 ✗ ones:1,,carry:1,tens:1,,ans:12
+
+  DPPU: 0/5 correct answers    VANILLA: 0/5 correct answers
+
+step=  6200 | DPPU  loss=0.6543 acc=78.6%  anchor=1.3482 | VANILLA  loss=0.5444 acc=81.2% | tf=0.260
+step=  6400 | DPPU  loss=0.6871 acc=77.2%  anchor=1.3370 | VANILLA  loss=0.5546 acc=80.3% | tf=0.250
+step=  6600 | DPPU  loss=0.7376 acc=76.3%  anchor=1.3585 | VANILLA  loss=0.5477 acc=80.7% | tf=0.240
+step=  6800 | DPPU  loss=0.7086 acc=76.0%  anchor=1.3548 | VANILLA  loss=0.5692 acc=80.1% | tf=0.231
+step=  7000 | DPPU  loss=0.7810 acc=73.2%  anchor=1.3440 | VANILLA  loss=0.5566 acc=80.6% | tf=0.222
+step=  7200 | DPPU  loss=0.8307 acc=72.6%  anchor=1.3871 | VANILLA  loss=0.5810 acc=79.5% | tf=0.213
+step=  7400 | DPPU  loss=0.7740 acc=74.3%  anchor=1.3905 | VANILLA  loss=0.5829 acc=79.1% | tf=0.205
+step=  7600 | DPPU  loss=0.7870 acc=72.8%  anchor=1.3907 | VANILLA  loss=0.5817 acc=79.3% | tf=0.197
+step=  7800 | DPPU  loss=0.7533 acc=72.7%  anchor=1.3930 | VANILLA  loss=0.5918 acc=79.4% | tf=0.189
+step=  8000 | DPPU  loss=0.7903 acc=72.0%  anchor=1.3873 | VANILLA  loss=0.6842 acc=76.6% | tf=0.182
+
+  PROBE step=8000  anchor=1.387314
+  PROBLEM      TARGET DPPU OUTPUT                  VANILLA OUTPUT               ANS
+  -------------------------------------------------------------------------------------
+  12+34=       46     ✗ ones:1,carry:0,tens:1,,ans:1 ✗ ones:4,carry:0,,tens:1,,ans:11
+  55+27=       82     ✗ ones:1,carry:0,tens:1,,ans:1 ✗ ones:1,,aary:0,,tens:1,,ans:11
+  73+18=       91     ✗ ones:1,carry:0,tens:1,,ans:1 ✗ ones:1,,aary:0,,tens:1,,ans:11
+  99+11=       110    ✗ ones:1,carry:0,tens:1,,ans:1 ✗ ones:1,caary:0,,tens:1,,ans:11
+  64+36=       100    ✗ ones:1,carry:0,tens:1,,ans:1 ✗ ones:1,ccarry:1,tens:1,,ans:11
+
+  DPPU: 0/5 correct answers    VANILLA: 0/5 correct answers
+
+step=  8200 | DPPU  loss=0.7930 acc=72.3%  anchor=1.3816 | VANILLA  loss=0.7148 acc=74.8% | tf=0.175
+step=  8400 | DPPU  loss=0.8389 acc=69.5%  anchor=1.3670 | VANILLA  loss=0.6873 acc=75.4% | tf=0.168
+step=  8600 | DPPU  loss=0.8268 acc=69.7%  anchor=1.3698 | VANILLA  loss=0.7553 acc=73.2% | tf=0.161
+step=  8800 | DPPU  loss=0.8593 acc=69.8%  anchor=1.3665 | VANILLA  loss=0.6548 acc=76.9% | tf=0.155
+step=  9000 | DPPU  loss=0.8848 acc=67.3%  anchor=1.3589 | VANILLA  loss=0.7244 acc=74.1% | tf=0.149
+step=  9200 | DPPU  loss=0.8960 acc=66.2%  anchor=1.3470 | VANILLA  loss=0.6907 acc=75.5% | tf=0.143
+step=  9400 | DPPU  loss=1.0170 acc=64.9%  anchor=1.3666 | VANILLA  loss=0.7084 acc=74.5% | tf=0.137
+step=  9600 | DPPU  loss=1.0511 acc=66.0%  anchor=1.3608 | VANILLA  loss=0.8074 acc=71.0% | tf=0.132
+step=  9800 | DPPU  loss=0.8672 acc=66.5%  anchor=1.3617 | VANILLA  loss=0.7947 acc=70.5% | tf=0.127
+step= 10000 | DPPU  loss=1.0765 acc=60.8%  anchor=1.3571 | VANILLA  loss=0.7006 acc=75.4% | tf=0.122
+
+  PROBE step=10000  anchor=1.357096
+  PROBLEM      TARGET DPPU OUTPUT                  VANILLA OUTPUT               ANS
+  -------------------------------------------------------------------------------------
+  12+34=       46     ✗ ones:1,carry:0,tens:1,anss:1 ✗ ones:1,carry:0,tens:1,,ans:1
+  55+27=       82     ✗ ones:1,carry:0,tens:1,anss:1 ✗ ones:1,,carry:1,tens:1,,ans:1
+  73+18=       91     ✗ ones:1,carry:0,tens:1,anss:1 ✗ ones:15,carry:1,tens:1,,ans:1
+  99+11=       110    ✗ ones:1,carry:0,tens:1,anss:1 ✗ ones:1,carry:0,tens:1,,ans:1
+  64+36=       100    ✗ ones:1,carry:0,tens:1,anss:1 ✗ ones:1,,carry:1,tens:1,,ans:1
+
+  DPPU: 0/5 correct answers    VANILLA: 0/5 correct answers
+
+step= 10200 | DPPU  loss=0.9710 acc=62.2%  anchor=1.3503 | VANILLA  loss=0.8101 acc=71.0% | tf=0.117
+step= 10400 | DPPU  loss=0.9502 acc=63.1%  anchor=1.3639 | VANILLA  loss=0.7958 acc=69.6% | tf=0.112
+step= 10600 | DPPU  loss=0.9078 acc=64.2%  anchor=1.3692 | VANILLA  loss=0.8000 acc=70.1% | tf=0.108
+step= 10800 | DPPU  loss=0.9221 acc=62.8%  anchor=1.3797 | VANILLA  loss=0.7652 acc=72.2% | tf=0.104
+step= 11000 | DPPU  loss=1.7918 acc=49.9%  anchor=1.3679 | VANILLA  loss=0.8205 acc=68.2% | tf=0.100
+step= 11200 | DPPU  loss=3.3182 acc=20.4%  anchor=1.4192 | VANILLA  loss=0.7877 acc=70.6% | tf=0.096
+step= 11400 | DPPU  loss=1.9967 acc=35.4%  anchor=1.4238 | VANILLA  loss=0.8561 acc=66.9% | tf=0.092
+step= 11600 | DPPU  loss=1.5351 acc=48.3%  anchor=1.4164 | VANILLA  loss=0.8597 acc=65.7% | tf=0.088
+step= 11800 | DPPU  loss=2.6481 acc=27.4%  anchor=1.3981 | VANILLA  loss=0.8522 acc=66.2% | tf=0.085
+step= 12000 | DPPU  loss=2.9862 acc=18.2%  anchor=1.4087 | VANILLA  loss=0.8845 acc=62.6% | tf=0.082
+
+  PROBE step=12000  anchor=1.408713
+  PROBLEM      TARGET DPPU OUTPUT                  VANILLA OUTPUT               ANS
+  -------------------------------------------------------------------------------------
+  12+34=       46     ✗ onesones:1,s:ns:1,s:ns:1,s:ns: ✗ ones:2,carry:0,tens:1,,ans:11
+  55+27=       82     ✗ onesones:1,s:ns:1,s:ns:1,s:ns: ✗ ones:1,,aary:0,tens:1,,ans:11
+  73+18=       91     ✗ ones:nes:s:ns:ass:1,s:ns:1,s:n ✗ ones:1,carry:0,tens:1,,ans:11
+  99+11=       110    ✗ onesones:1,s:ns:1,s:ns:1,s:ns: ✗ ones:1,carry:0,tens:1,,ans:11
+  64+36=       100    ✗ onesones:1,s:ns:1,s:ns:1,s:ns: ✗ ones:1,carry:0,tens:1,,ans:11
+
+  DPPU: 0/5 correct answers    VANILLA: 0/5 correct answers
+
+step= 12200 | DPPU  loss=2.2709 acc=34.5%  anchor=1.3763 | VANILLA  loss=0.8700 acc=65.6% | tf=0.078
+step= 12400 | DPPU  loss=1.7693 acc=46.3%  anchor=1.3757 | VANILLA  loss=0.8768 acc=65.3% | tf=0.075
+step= 12600 | DPPU  loss=1.2965 acc=55.4%  anchor=1.3641 | VANILLA  loss=0.8549 acc=66.8% | tf=0.072
+step= 12800 | DPPU  loss=1.2704 acc=55.0%  anchor=1.3632 | VANILLA  loss=0.8729 acc=65.7% | tf=0.070
+step= 13000 | DPPU  loss=1.3088 acc=53.9%  anchor=1.3652 | VANILLA  loss=0.8750 acc=64.7% | tf=0.067
+step= 13200 | DPPU  loss=1.3883 acc=51.0%  anchor=1.3642 | VANILLA  loss=0.9039 acc=62.4% | tf=0.064
+step= 13400 | DPPU  loss=1.2770 acc=52.9%  anchor=1.3641 | VANILLA  loss=0.8826 acc=61.9% | tf=0.062
+step= 13600 | DPPU  loss=1.1087 acc=56.9%  anchor=1.3702 | VANILLA  loss=0.9416 acc=61.1% | tf=0.059
+step= 13800 | DPPU  loss=1.0430 acc=58.9%  anchor=1.3682 | VANILLA  loss=0.8889 acc=62.9% | tf=0.057
+step= 14000 | DPPU  loss=1.0578 acc=58.1%  anchor=1.3501 | VANILLA  loss=0.8862 acc=62.1% | tf=0.055
+
+  PROBE step=14000  anchor=1.350088
+  PROBLEM      TARGET DPPU OUTPUT                  VANILLA OUTPUT               ANS
+  -------------------------------------------------------------------------------------
+  12+34=       46     ✗ ones:1,carry:0,tens::1,ans:11 ✗ ones:9,carry:0,tens::1,,an::1
+  55+27=       82     ✗ ones:1,,caryy01,tns::1,aass:11 ✗ ones:11,carry:1,tens:1,,ns::1
+  73+18=       91     ✗ ones:1,carry:0,tens::1,ans:11 ✗ ones:11,carry:1,tens:1,,ns::1
+  99+11=       110    ✗ ones:1,carry:0,tens::1,ans:11 ✗ ones:1,carry:0,tens::1,,an::1
+  64+36=       100    ✗ ones:1,,caryy01,tns::1,aass:11 ✗ ones:1,,arry:0,tens::1,,an::1
+
+  DPPU: 0/5 correct answers    VANILLA: 0/5 correct answers
+
+step= 14200 | DPPU  loss=1.5403 acc=50.7%  anchor=1.3278 | VANILLA  loss=0.8892 acc=62.4% | tf=0.053
+step= 14400 | DPPU  loss=1.9113 acc=42.9%  anchor=1.3165 | VANILLA  loss=0.8764 acc=63.7% | tf=0.051
+step= 14600 | DPPU  loss=1.6097 acc=47.4%  anchor=1.3073 | VANILLA  loss=0.9069 acc=59.8% | tf=0.050
+step= 14800 | DPPU  loss=2.7898 acc=24.5%  anchor=1.3093 | VANILLA  loss=0.8757 acc=63.3% | tf=0.050
+step= 15000 | DPPU  loss=1.9972 acc=39.5%  anchor=1.3117 | VANILLA  loss=0.8970 acc=63.8% | tf=0.050
+step= 15200 | DPPU  loss=1.4847 acc=50.2%  anchor=1.3305 | VANILLA  loss=0.9488 acc=60.7% | tf=0.050
+step= 15400 | DPPU  loss=1.1279 acc=55.7%  anchor=1.3298 | VANILLA  loss=0.9192 acc=60.7% | tf=0.050
+step= 15600 | DPPU  loss=2.5823 acc=30.5%  anchor=1.3095 | VANILLA  loss=0.9006 acc=61.3% | tf=0.050
+step= 15800 | DPPU  loss=1.6502 acc=48.7%  anchor=1.3166 | VANILLA  loss=0.8733 acc=63.1% | tf=0.050
+step= 16000 | DPPU  loss=2.0804 acc=39.2%  anchor=1.3096 | VANILLA  loss=0.8783 acc=63.3% | tf=0.050
+
+  PROBE step=16000  anchor=1.309579
+  PROBLEM      TARGET DPPU OUTPUT                  VANILLA OUTPUT               ANS
+  -------------------------------------------------------------------------------------
+  12+34=       46     ✗ ones:1,,arr:1,,ans:11,aarr::,t ✗ ones:1,carry:0,tens:1,,ans:1
+  55+27=       82     ✗ ones:1,,arr:1,,ans:11,aarr::,t ✗ ones:1,,carry:1,tens:1,,ans:1
+  73+18=       91     ✗ ones:1,,arr:1,,ans:11,aarr::,t ✗ ones:1,,carry:1,tens:1,,ans:1
+  99+11=       110    ✗ ones:1,,arr:1,,ans:11,aarr::,t ✗ ones:1,carry:0,tens:1,,ans:1
+  64+36=       100    ✗ ones:1,,arr:1,,ans:11,aarr::,t ✗ ones:1,,carry:1,tens:1,,ans:1
+
+  DPPU: 0/5 correct answers    VANILLA: 0/5 correct answers
+
+step= 16200 | DPPU  loss=1.3658 acc=52.1%  anchor=1.3199 | VANILLA  loss=0.8991 acc=60.7% | tf=0.050
+step= 16400 | DPPU  loss=1.2980 acc=52.2%  anchor=1.3152 | VANILLA  loss=0.8940 acc=62.6% | tf=0.050
+step= 16600 | DPPU  loss=1.9255 acc=42.2%  anchor=1.3089 | VANILLA  loss=0.9131 acc=60.5% | tf=0.050
+step= 16800 | DPPU  loss=1.4071 acc=50.7%  anchor=1.3213 | VANILLA  loss=0.9001 acc=60.1% | tf=0.050
+step= 17000 | DPPU  loss=1.1615 acc=55.6%  anchor=1.3169 | VANILLA  loss=0.9184 acc=60.5% | tf=0.050
+step= 17200 | DPPU  loss=1.1301 acc=56.2%  anchor=1.3282 | VANILLA  loss=0.9036 acc=60.1% | tf=0.050
+step= 17400 | DPPU  loss=1.5837 acc=50.7%  anchor=1.3284 | VANILLA  loss=0.8906 acc=62.2% | tf=0.050

@@ -1,0 +1,21 @@
+
+==============================================================
+  DPPU-VRU v19  |  device=cuda  params=651,542
+  phi=4/pi=1.273240  hidden=320  2xDPPUCell
+  HUMAN LEARNING LOOP:
+    exposure=50 steps (tf=1.0, no update)
+    challenge=20 steps (tf=0.0, update)
+    silence=10 steps (no input, no update)
+    surprise=5 steps (OOD examples, update)
+  cycle=0  level=1  streak=0  best=0.0%
+  logs → /content/drive/MyDrive/dppu_vru/v19_log.txt
+==============================================================
+cycle=    10 L1 | loss=1.7247 | acc=46.9% | a=1.2713 | lr=5.00e-04
+cycle=    20 L1 | loss=1.6920 | acc=47.8% | a=1.2733 | lr=1.00e-03
+cycle=    30 L1 | loss=1.7252 | acc=48.0% | a=1.2729 | lr=5.00e-04
+cycle=    40 L1 | loss=1.6579 | acc=48.0% | a=1.2732 | lr=1.00e-03
+cycle=    50 L1 | loss=1.7296 | acc=47.7% | a=1.2731 | lr=5.00e-04
+cycle=    60 L1 | loss=1.6408 | acc=48.3% | a=1.2732 | lr=1.00e-03
+cycle=    70 L1 | loss=1.6944 | acc=48.0% | a=1.2732 | lr=5.00e-04
+cycle=    80 L1 | loss=1.6481 | acc=48.3% | a=1.2732 | lr=1.00e-03
+cycle=    90 L1 | loss=1.7056 | acc=48.5% | a=1.2732 | lr=5.00e-04

@@ -1,0 +1,46 @@
+
+==============================================================
+  DPPU-VRU v20  |  GET OUT OF THE WAY
+  device=cuda  params=208,149
+  phi=4/pi=1.273240  hidden=256
+  anchor: FREE (no regularization)
+  tf: multiplicative decay, model-driven
+  position embeddings: REMOVED
+  cells: 1 (back to basics)
+  step=0  level=1  best=0.0%
+==============================================================
+
+==============================================================
+  DPPU-VRU v20  |  GET OUT OF THE WAY
+  device=cuda  params=214,781
+  phi=4/pi=1.273240  hidden=260
+  anchor: FREE (no regularization)
+  tf: multiplicative decay, model-driven
+  position embeddings: REMOVED
+  cells: 1 (back to basics)
+  step=0  level=1  best=0.0%
+==============================================================
+step=   100 L1 | loss=1.6316 | acc=46.6% | entropy=1.694 | anchor=1.253489 | tf=0.856 | lr=1.00e-03
+step=   200 L1 | loss=1.5032 | acc=47.4% | entropy=1.531 | anchor=1.272549 | tf=0.814 | lr=1.00e-03
+step=   300 L1 | loss=1.5187 | acc=46.5% | entropy=1.533 | anchor=1.285699 | tf=0.775 | lr=1.00e-03
+step=   400 L1 | loss=1.4526 | acc=48.6% | entropy=1.517 | anchor=1.290596 | tf=0.737 | lr=1.00e-03
+step=   500 L1 | loss=1.5134 | acc=47.7% | entropy=1.482 | anchor=1.300829 | tf=0.701 | lr=1.00e-03
+step=   600 L1 | loss=1.4146 | acc=49.2% | entropy=1.523 | anchor=1.311081 | tf=0.667 | lr=1.00e-03
+step=   700 L1 | loss=1.4360 | acc=49.2% | entropy=1.518 | anchor=1.313823 | tf=0.634 | lr=1.00e-03
+step=   800 L1 | loss=1.4716 | acc=48.1% | entropy=1.513 | anchor=1.316555 | tf=0.603 | lr=1.00e-03
+step=   900 L1 | loss=1.4188 | acc=49.8% | entropy=1.498 | anchor=1.316304 | tf=0.574 | lr=1.00e-03
+step=  1000 L1 | loss=1.4670 | acc=48.8% | entropy=1.497 | anchor=1.319939 | tf=0.546 | lr=1.00e-03
+
+  PROBE step=1000  anchor=1.319939
+  ✗  12+34=46  →  '60'
+  ✗  55+27=82  →  '10'
+  ✗  73+18=91  →  '10'
+  ✗  99+11=110  →  '104'
+  ✗  64+36=100  →  '104'
+  0/5 exact
+
+  · step=1000 exact=2.0%  streak=0  best=2.0%
+step=  1100 L1 | loss=1.4831 | acc=48.4% | entropy=1.524 | anchor=1.319612 | tf=0.519 | lr=1.00e-03
+step=  1200 L1 | loss=1.5086 | acc=48.8% | entropy=1.567 | anchor=1.323938 | tf=0.494 | lr=1.00e-03
+step=  1300 L1 | loss=1.4693 | acc=48.5% | entropy=1.534 | anchor=1.324177 | tf=0.470 | lr=1.00e-03
+step=  1400 L1 | loss=1.4947 | acc=48.4% | entropy=1.525 | anchor=1.324542 | tf=0.447 | lr=1.00e-03

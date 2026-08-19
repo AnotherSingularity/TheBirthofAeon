@@ -1,0 +1,9 @@
+[08:34:54] ================================================================
+[08:34:54] VRU v23  --  Explicit Register Architecture
+[08:34:54] Hidden: 192  |  Reg dim: 32  |  Device: cuda
+[08:34:54] PHI x ALPHA = 1.000000000000000  (dual identity)
+[08:34:54] Vocab: 47  |  Params: estimating...
+[08:34:54] ================================================================
+[08:34:54] Parameters: 81,775
+[08:34:59] Stage 1: single-digit no carry
+

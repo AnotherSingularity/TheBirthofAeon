@@ -1,0 +1,38 @@
+
+==============================================================
+  DPPU-VRU v20b  |  HONEST COMPARISON
+  device=cuda
+  DPPU params=214,781  |  Vanilla params=146,140
+  task: 2-digit addition only (level 1)
+  same lr, batch, loss, tf schedule -- only cell differs
+==============================================================
+step=   200 | DPPU  loss=1.5693 acc=47.2%  anchor=1.2792 | VANILLA  loss=1.4588 acc=48.8% | tf=0.814
+step=   400 | DPPU  loss=1.4550 acc=48.4%  anchor=1.2847 | VANILLA  loss=1.3657 acc=50.3% | tf=0.737
+step=   600 | DPPU  loss=1.4478 acc=48.8%  anchor=1.2957 | VANILLA  loss=1.3653 acc=50.6% | tf=0.667
+step=   800 | DPPU  loss=1.4402 acc=49.1%  anchor=1.3031 | VANILLA  loss=1.3804 acc=50.2% | tf=0.603
+step=  1000 | DPPU  loss=1.4470 acc=48.9%  anchor=1.3051 | VANILLA  loss=1.3828 acc=50.8% | tf=0.546
+step=  1200 | DPPU  loss=1.4673 acc=49.3%  anchor=1.3098 | VANILLA  loss=1.4194 acc=50.5% | tf=0.494
+step=  1400 | DPPU  loss=1.4800 acc=48.7%  anchor=1.3147 | VANILLA  loss=1.4380 acc=49.4% | tf=0.447
+step=  1600 | DPPU  loss=1.4985 acc=48.5%  anchor=1.3194 | VANILLA  loss=1.4539 acc=49.6% | tf=0.404
+step=  1800 | DPPU  loss=1.5123 acc=48.7%  anchor=1.3208 | VANILLA  loss=1.4714 acc=49.6% | tf=0.366
+step=  2000 | DPPU  loss=1.5072 acc=48.7%  anchor=1.3222 | VANILLA  loss=1.4815 acc=49.4% | tf=0.331
+
+  PROBE step=2000
+  EXAMPLE                DPPU    VANILLA
+  ----------------------------------------
+  12+34=46         ✗ '    11'   ✗ '    11'
+  55+27=82         ✗ '    11'   ✗ '    81'
+  73+18=91         ✗ '    11'   ✗ '    10'
+  99+11=110        ✗ '   131'   ✗ '   128'
+  64+36=100        ✗ '   111'   ✗ '   119'
+
+  DPPU: 0/5    VANILLA: 0/5
+
+step=  2200 | DPPU  loss=1.5349 acc=48.5%  anchor=1.3250 | VANILLA  loss=1.4957 acc=48.8% | tf=0.300
+step=  2400 | DPPU  loss=1.5416 acc=48.3%  anchor=1.3403 | VANILLA  loss=1.5072 acc=48.9% | tf=0.271
+step=  2600 | DPPU  loss=1.5350 acc=48.6%  anchor=1.3421 | VANILLA  loss=1.5117 acc=49.2% | tf=0.245
+step=  2800 | DPPU  loss=1.5528 acc=48.6%  anchor=1.3428 | VANILLA  loss=1.5157 acc=49.2% | tf=0.222
+step=  3000 | DPPU  loss=1.5501 acc=48.2%  anchor=1.3436 | VANILLA  loss=1.5470 acc=48.3% | tf=0.201
+step=  3200 | DPPU  loss=1.5635 acc=48.2%  anchor=1.3486 | VANILLA  loss=1.5514 acc=48.7% | tf=0.182
+step=  3400 | DPPU  loss=1.5711 acc=48.3%  anchor=1.3516 | VANILLA  loss=1.5643 acc=48.5% | tf=0.164
+step=  3600 | DPPU  loss=1.5663 acc=48.4%  anchor=1.3505 | VANILLA  loss=1.5590 acc=48.2% | tf=0.149
