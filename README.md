@@ -8,25 +8,47 @@ rewritten for an audience. It is the actual trail of work: dead ends, duplicated
 `Copy of Copy of` filenames, empty scratch files and all. That mess is the point. It is
 what the process actually looked like.
 
-## The architecture in one paragraph
+## What this archive is
 
-The **VRU (Vitruvian Recurrent Unit)**, formerly the **DPPU (Dynamic Pi-Phi Processing
-Unit)**, is a recurrent cell built around a single fixed geometric constant:
+Two architectures live here, and the second one **refutes the first**. Reading the
+documents without knowing that will mislead you.
+
+**The VRU (Vitruvian Recurrent Unit)**, formerly the **DPPU (Dynamic Pi-Phi Processing
+Unit)**, is built on a fixed geometric constant:
 
 ```
 phi = 4/pi = 1.2732...      alpha = pi/4 = 0.7854...      phi x alpha = 1
 ```
 
-`phi` is the circle-square ratio taken from Da Vinci's Vitruvian Man — hence the rename.
-It scales the recurrent weight path; its reciprocal dual `alpha` scales the input
-projection. The geometry it comes from is set out in
-[`docs/foundations/`](./docs/foundations), written a year before any of the code. The claim is that this proportion, applied as a fixed scalar with no gates,
-normalization or constraint machinery, holds gradients stable across sequences of
-arbitrary length. The reported result is LSTM-class performance at roughly 4x fewer
-parameters, stable to 15,000 timesteps under full BPTT.
+`phi` is the circle-square ratio derived from Da Vinci's Vitruvian Man — hence the name.
+It scales the recurrent weight path, with its reciprocal dual `alpha` on the input
+projection, and the claim was that this proportion alone holds gradients stable across
+arbitrarily long sequences. The geometry is set out in
+[`docs/foundations/`](./docs/foundations), written a year before any of the code.
+Documents 1–9 in [`docs/vru-architecture/`](./docs/vru-architecture) build the case and
+then take it apart: document 8 fails to prove the mechanism, document 9 finds where it
+breaks.
 
-Whether `phi = 4/pi` is *derived* or merely *decorative* is the open question the archive
-keeps circling. It is not settled here, and the documents say so.
+**Aeon** is what came next, and it drops `phi` entirely. From the canonical definition in
+[`poc/aeon/recursion.py`](./poc/aeon/recursion.py):
+
+```
+BANNED
+------
+* No phi = 4/pi anywhere. Refuted by Delta-1 ablation.
+* No "purge" / circuit breaker doing load-bearing stability work.
+  Stability is the parameterization, not a safety net.
+```
+
+In its place is something provable. The recurrent map is parameterized so its largest
+singular value is **below 1 by construction** — `W = sigmoid(s) · MARGIN · Cayley(A) ·
+diag(tanh(d))` — rather than clipped, gated, or hoped for. As the module puts it: "There is
+no setting of the parameters that violates it." Contraction then follows from Banach's
+fixed point theorem: perturbations decay exponentially and numerical error cannot compound.
+
+That is the arc this repository records — a geometric intuition, pursued for fourteen
+months, falsified by its author's own ablation, and replaced by a mechanism that carries a
+proof. The founding idea did not survive. The discipline that killed it is the result.
 
 ## What's in here
 
@@ -37,6 +59,7 @@ keeps circling. It is not settled here, and the documents say so.
 | [`docs/foundations/`](./docs/foundations) | The January 2025 origin papers — where `phi` and `pi_dyn` come from. |
 | [`docs/vru-architecture/`](./docs/vru-architecture) | The core research series — what the architecture is and why it works. |
 | [`docs/vru-trading-bot/`](./docs/vru-trading-bot) | A complete six-part series applying it to markets. |
+| [`poc/`](./poc) | **Aeon itself** — the working proof-of-concept package. |
 | [`raw/`](./raw) | Verbatim source dumps that are not notebooks. |
 
 ## Documents
@@ -204,6 +227,35 @@ Mixture-of-Recursions. It is the sharpest critique in this archive: it presses o
 parameter count "is a low bar" against a 1997 architecture. It is included because the
 criticism is part of the record.
 
+## Aeon — the proof of concept (`poc/`)
+
+An installable Python package: the recursion cell grafted onto a frozen
+**R1-Distill-Qwen-1.5B** backbone as `AeonR1ForCausalLM`, a Qwen2 subclass.
+
+```
+poc/aeon/recursion.py    the canonical cell — "single source of truth" (Gen 6)
+poc/aeon/block.py        per-block integration with a learned gate
+poc/aeon/model.py        AeonModel / AeonR1ForCausalLM
+poc/aeon/audit.py        contraction-certificate auditing
+poc/scripts/             from_r1, prepare_alpaca, train_stage1/2, verify, probe, chat
+poc/tests/               recursion, block shapes, stage-0 gate
+```
+
+**The certificate.** `sigma_max(W_h) < MARGIN_H` and `sigma_max(W_c) < MARGIN_C`, both
+below 1. It is not enforced after the fact — the parameterization admits no violating
+setting.
+
+**Two charts, one cell.** Chart B (`sigmoid(s) · MARGIN · Cayley(A) · diag(tanh(d))`) is
+the training default, where the certificate is structural. Chart A stores `W` directly and
+projects after each forward, for audit and reference. `equivalence_check()` verifies the
+two agree to ~1e-7 — an atlas in the differential-geometry sense: two charts on one object.
+
+**Stage 0** is a wiring gate — with the gate at zero, Aeon must reproduce the untouched R1
+backbone, verified to ~1e-6 in fp32.
+
+All modules compile cleanly. The test suite was **not** run here: this container has no
+`torch`, so the tests are published unverified in this environment.
+
 ## Notebooks
 
 Two threads run through the 96 notebooks, and they converge.
@@ -258,6 +310,7 @@ in, at "Stage 1: single-digit no carry".
 
 Partial upload; further batches of source material are still to come.
 
+- `poc/` — Aeon proof-of-concept
 - `docs/foundations/` — five origin papers
 - `docs/vru-trading-bot/` — complete (1–6)
 - `docs/vru-architecture/` — **complete (1–9)**; a document 10 (VRU v11 scratchpad
