@@ -14,7 +14,7 @@ point. It is what the process actually looked like.
 |---|---|
 | [`notebooks/`](./notebooks) | 96 Google Colab notebooks. See [`notebooks/INDEX.md`](./notebooks/INDEX.md) for a grouped index. |
 | [`runs/dppu_vru/`](./runs/dppu_vru) | Training logs, checkpoints and metadata for runs **v17–v23**. |
-| [`docs/`](./docs) | Architecture and strategy documents (Horizon Tech). |
+| [`docs/`](./docs) | A recursion literature synthesis, plus the complete six-part Horizon Tech VRU trading bot series. |
 
 ## The work
 
@@ -37,8 +37,8 @@ Alongside it: batch/depth scaling sweeps across CPU, TPU, T4 and H100; spectral 
 ablations; a six-way separation test; field attention; and recursion-stability work.
 
 **The applications.** A proof-of-cognition blockchain with governance voting, early
-market-data prototypes, and — documented in `docs/` — a retargeting of v23 from
-arithmetic reasoning to order-flow classification.
+market-data prototypes, and — documented across the six-part series in `docs/` — a
+retargeting of v23 from arithmetic reasoning to order-flow classification.
 
 ## Training runs (`runs/dppu_vru/`)
 
@@ -52,17 +52,43 @@ in, at "Stage 1: single-digit no carry".
 
 ## Documents (`docs/`)
 
-- `04 - Order Flow Parasitism Trading Strategy.pdf`
-- `05 - VRU Trading Bot Architecture Specification.pdf`
-- `06 - Development Roadmap.pdf`
+### Recursion as a Load-Bearing Principle
 
-These are documents 4–6 of a longer numbered series; **1–3 are not in this repository yet.**
+A literature synthesis situating the VRU/DPPU work against the current recurrent-model
+frontier — Mamba/Mamba-2, xLSTM, Griffin/Hawk, RWKV, Mixture-of-Recursions — and arguing
+that fixed-point structure, self-similarity and bounded-state sequence modelling are the
+same mathematical object seen from different angles.
 
-A note on the strategy document, since the name invites misreading: "order flow
-parasitism" describes inferring institutional intent from *publicly available* market
-data — consolidated-tape dark pool prints, exchange options tape, order book imbalance,
-13F filings. The document is explicit that this is not front-running and involves no
-material non-public information.
+It is also the sharpest critique in this archive. It presses hard on whether phi = 4/pi is
+*derivable* rather than decorative, and it says plainly that beating an LSTM on parameter
+count "is a low bar" against a 1997 architecture. It is included because the criticism is
+part of the record.
+
+### VRU Trading Bot series (Horizon Tech)
+
+A six-part sequence, complete:
+
+| # | Document |
+|---|---|
+| 01 | What Is Aladdin (BlackRock) |
+| 02 | VRU vs Aladdin Competitive Analysis |
+| 03 | Third-Party Data Pipeline Strategy |
+| 04 | Order Flow Parasitism Trading Strategy |
+| 05 | VRU Trading Bot Architecture Specification |
+| 06 | Development Roadmap |
+
+It runs as an argument: 01 establishes that BlackRock's Aladdin is risk infrastructure
+with a human approving every trade, not an autonomous trader. 02 concedes the honest
+comparison is against quant strategies rather than Aladdin itself, and concedes where
+VRU loses — data depth and execution latency. 03 addresses the data gap through
+third-party feeds. 04 states the strategy, 05 specifies the architecture, 06 schedules
+the build.
+
+A note on 04, since the name invites misreading: "order flow parasitism" describes
+inferring institutional intent from *publicly available* market data — consolidated-tape
+dark pool prints, exchange options tape, order book imbalance, 13F filings. The document
+is explicit that this is not front-running and involves no material non-public
+information.
 
 ## Reading the notebooks
 
@@ -77,6 +103,7 @@ They will not run unmodified outside that environment.
 ## Status
 
 This is a partial upload — further batches of source material are still to come.
+The `docs/` trading bot series is complete at 1–6.
 
 ## License
 
