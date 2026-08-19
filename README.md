@@ -10,6 +10,15 @@ what the process actually looked like.
 
 ## What this archive is
 
+> **Scope.** The bulk of this repository is the DPPU/VRU lineage — v2 through v23 — that
+> *precedes* Aeon. Aeon itself is the proof-of-concept package in [`poc/`](./poc); the
+> notebooks, training runs and documents are its prehistory. Where the two disagree, `poc/`
+> is current and the documents are historical record.
+>
+> **`VRU` = Vitruvian Recurrent Unit** throughout. The architecture diagram's "Variable
+> Recurrent Unit" is a one-off variant; see [`ERRATA.md`](./ERRATA.md) E5.
+
+
 Two architectures live here, and the second one **refutes the first**. Reading the
 documents without knowing that will mislead you.
 
@@ -86,7 +95,7 @@ centres rather than one — a physical centre at the stomach and a perceptual ce
 mind — and a folding factor `Δ` shifting between them. From that dual-centre model it
 argues that `pi` should be treated as a function rather than a fixed constant, approaching
 4 under folding, which is the sense in which the circle gets squared. *Dynamic Phi*
-(co-authored with Mary Elizabeth Gaynor) applies the same move to the golden ratio, and
+(which carries a second co-author byline) applies the same move to the golden ratio, and
 the *Master Equation* combines them as `Ω(Δ) = pi_dynamic · phi_dynamic`.
 
 **These are speculative theoretical papers, not peer-reviewed results.** They propose
@@ -108,22 +117,15 @@ ratio*, 1.618. The `phi` of the VRU architecture is `4/pi`, 1.273. Same letter, 
 number — and reading the two bodies of work together, this is the easiest thing to trip
 over.
 
-Document 1 resolves part of this: within the field system it *defines* `phi_classical`
-as `4/pi`, so the architecture is internally consistent even though the January papers use
-1.618 under the same letter.
+Document 1 resolves part of this: within the field system it *defines* `phi_classical` as
+`4/pi`, so the architecture is internally consistent on its own terms.
 
-A second thread connects them. The code carries a constant that is never mentioned in any
-document:
-
-```python
-DELTA_STAR = math.log((1.6180 - 1.0) / (PHI_CL - 1.0))    # = 0.816140
-```
-
-Under the dynamic-phi form `f(Δ) = 1 + (C - 1)e^(-Δ)`, starting from the *golden ratio*
-`C = 1.618`, the value at `Δ = DELTA_STAR` is `4/pi` exactly, to machine precision. Document
-1 independently identifies a critical point `D* ≈ 0.816` — described there as the peak of
-the `Omega` product function, located by gradient ascent — and states that the cell operates
-at that transition. The two numbers agree to three decimal places by quite different routes.
+The two bodies of work are not reconciled, however. The `phi` of the January 2025 papers is
+the **golden ratio, 1.618**. The `phi` of the VRU architecture is **4/pi, 1.273**. They are
+different numbers under the same letter, and **this archive does not contain a derivation
+linking them.** A constant in `raw/HZ.txt` (`GOLDEN_DECAY_TIME`, line 17) converts between
+them, but it is a decay time restating its own definition rather than a derivation — see
+[`ERRATA.md`](./ERRATA.md) E4.
 
 ### `docs/vru-architecture/` — the core research
 
@@ -166,7 +168,15 @@ DPPU:   h_t = tanh( W_x·x_t + phi · W_h·h_{t-1} + b )
 At hidden=32 both DPPU and vanilla have 1,121 parameters against LSTM's 4,513. Document 2
 then states four falsifiable conjectures, and documents 3–9 test them in order.
 
-Read in order, these get **less** conclusiveRead in order, these get **less** conclusive, deliberately, and that is the most
+Known defects in document 01 are recorded in [`ERRATA.md`](./ERRATA.md) — the limits are
+stated backwards, Table 1 was generated from the mirrored formula, and the critical point
+`D* ~ 0.816` does not exist (the true maximum is `D* = ln 2`).
+
+Read in order, these get **less** conclusiveKnown defects in document 01 are recorded in [`ERRATA.md`](./ERRATA.md) — the limits are
+stated backwards, Table 1 was generated from the mirrored formula, and the critical point
+`D* ~ 0.816` does not exist (the true maximum is `D* = ln 2`).
+
+Read in order, these get **less** conclusive, deliberately, and that is the most
 interesting thing about them:
 
 - **03** finds no advantage at all at seq_len 200, then a 1.57x gradient advantage at
@@ -303,6 +313,43 @@ level, streak, best score, teacher-forcing rate) and a `_checkpoint.pth`. `v21_l
 the longest run in the archive and logs DPPU against a vanilla baseline step by step.
 `v23_audit.jsonl` is the start of the v23 curriculum audit trail.
 
+### What the v21 log actually shows
+
+`v21_log.txt` is the archive's longest run, and it does not support the headline claims.
+Recomputed from the log itself (114 logged steps):
+
+| | |
+|---|---|
+| Parameters | DPPU **229,890** vs vanilla **161,249** — 1.43x **more**, not fewer |
+| Accuracy | DPPU exceeded vanilla in **3 of 114** steps |
+| Final 20 steps | DPPU 24.5–58.9% vs vanilla 59.8–63.8% |
+| Stability | DPPU standard deviation **6.9x** wider than vanilla over those steps |
+| Probe at step 16,000 | DPPU **0/5**, vanilla **0/5** — neither model solved any problem |
+
+**Scope of the parameter-efficiency claim.** "LSTM-class performance at ~4x fewer
+parameters" was measured on the **sine-wave tasks of documents 04 and 05**. It does not
+transfer to the arithmetic curriculum, where v21 uses more parameters than its own baseline
+and trails it on accuracy.
+
+### Anchor drift
+
+The learnable anchor initialises at `phi = 1.2732`. Left unregularised in v20, v20b and
+v21, it does not stay there:
+
+| run | first | last | range |
+|---|---|---|---|
+| v20 | 1.2535 | 1.3245 | — |
+| v20b | 1.2792 | 1.3505 | — |
+| v21 | 1.2742 | 1.3284 | 1.2148 – 1.4238 |
+
+Across v21's 123 anchor samples the mean is **1.3234, or +3.9% from 4/pi**, with the
+first-half mean (1.2898) below the second-half mean (1.3566). The drift is **upward and
+away from `4/pi`**, not toward it. It is not monotonic — the value decreases at 58 of 122
+transitions — but the trend is unambiguous.
+
+This is the archive's own evidence running against the spectral-attractor argument of
+document 07. **It is unexplained here, and no attempt is made to explain it away.**
+
 The v23 run here is a **beginning, not a finished result** — the log ends a few seconds
 in, at "Stage 1: single-digit no carry".
 
@@ -318,9 +365,8 @@ Partial upload; further batches of source material are still to come.
 
 ## Authorship
 
-Work by **Dylan Michael Scott** (Horizon Tech), per the bylines on Document 9 and the
-January 2025 foundation papers. *Dynamic Phi Transformation* and the *Unified Master
-Equation* additionally credit **Mary Elizabeth Gaynor** as co-author.
+Work by **Dylan Michael Scott** (Horizon Tech), per the bylines on the documents in
+`docs/`. Two of the January 2025 foundation papers additionally carry a co-author byline.
 
 ## License
 

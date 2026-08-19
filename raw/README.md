@@ -29,3 +29,26 @@ the file actually is: a snapshot of the work in progress, sent to oneself at mid
 **One modification:** a four-line Gmail header at the top — sender name, personal email
 address, timestamp, recipient — was removed before publication. Nothing else was changed;
 the body below that header is verbatim, trailing conversation included.
+
+## Note on `DELTA_STAR` (line 17)
+
+`HZ.txt` is preserved verbatim and is **not** edited. This note records a defect in it.
+
+```python
+DELTA_STAR = math.log((1.6180 - 1.0) / (PHI_CL - 1.0))    # = 0.8161396
+```
+
+1. **It is a decay time, by definition** — the `D` at which `f(D) = 1 + (C-1)e^(-D)`,
+   started from the golden ratio 1.618, passes through `4/pi`. Evaluating it at that point
+   restates its own definition; it confirms nothing independently.
+2. **It is not a peak**, and is unrelated to the field system's critical point
+   `D* = ln 2 = 0.693147`.
+3. **It does not apply to the `phi_dyn` coded at line 24**, which starts at `4/pi` and
+   decays to 1. That function at `DELTA_STAR` is `1.1208`, not `4/pi`.
+
+Outside `raw/` this quantity is called **`GOLDEN_DECAY_TIME`**, so it cannot be confused
+with the critical point. See [`../ERRATA.md`](../ERRATA.md) E4.
+
+Also unmodified: `omega()` at line 25 carries a `(1 + D)` denominator that makes the
+function monotonically decreasing, so the interior maximum attributed to it does not exist.
+It has a live call site at line 107. See `ERRATA.md` E3.
