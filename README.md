@@ -257,14 +257,31 @@ parameters violates it.
 
 **That bound is on the two matrices individually, not on the joint map.** The state is
 `(h, c)`, and `h` reaches `h_next` both directly through `W_h` and via `c_next`, which
-enters the same `tanh`. Measured across 20 seeds at default init, `sigma(W_h)` and
-`sigma(W_c)` stay inside their margins on every seed while `sigma(J)` of the joint
-Jacobian averages **1.04 and exceeds 1 on 15 of them** — so the cell is *not* a Euclidean
-contraction, and Banach does not apply in that metric. What does hold is `rho(J) < 1` on
-every seed (mean 0.76), and therefore a `P > 0` with `J^T P J - P < 0`: the map is a
-strict contraction in the **P-metric**, `||J||_P` averaging 0.87 across the same seeds.
-`audit_certificates()` solves for that `P` and reports it as Chart D. **That is the
-guarantee to quote**, not the per-matrix bound.
+enters the same `tanh`. Over 200 seeds, with `sigma(W_h)` and `sigma(W_c)` inside their
+margins on every one:
+
+| λ | mean σ(J) | σ(J) > 1 | mean ρ(J) | mean ‖J‖_P |
+|---|---|---|---|---|
+| 0.50 *(old default)* | 1.0287 | 142/200 | 0.7607 | 0.8714 |
+| 0.70 *(current)* | 0.9904 | 84/200 | 0.6901 | 0.8251 |
+
+Raising λ to 0.70 cut the Euclidean violation rate from 71% of seeds to 42% and pulled the
+mean just below 1. **It did not eliminate it.** The cell is not a Euclidean contraction and
+Banach does not apply in that metric.
+
+What holds is `rho(J) < 1` on every seed, hence a `P > 0` with `J^T P J - P < 0`: strict
+contraction in the **P-metric**, `‖J‖_P < 1` on 200/200. `audit_certificates()` solves for
+that `P` and reports it as Chart D.
+
+**Two limits on that result, stated rather than buried.** `P` is solved for the
+linearization *at the origin*, so this is a **local** statement — not a metric uniform over
+the reachable set, and so not a nonlinear contraction certificate in the sense of Lohmiller
+& Slotine (1998). Aeon does not currently have one. And the origin is **not proven to be
+the worst case**: the outer `tanh` derivative factors out on the left and can only reduce
+`σ`, but the inner one sits inside `W_h + λ·D₂·W_c`, where shrinking it can *enlarge* that
+block through cancellation. With `W_h = -1.2·λ·W_c`, `σ` is non-monotonic in `d₂` and
+exceeds its origin value as `d₂ → 0` (0.5406 → 0.6187). That counterexample is pinned in
+`tests/test_recursion.py` so the claim cannot be quietly restored.
 
 **Two charts, one cell.** Chart B (`sigmoid(s) · MARGIN · Cayley(A) · diag(tanh(d))`) is
 the training default, where the certificate is structural. Chart A stores `W` directly and
@@ -274,11 +291,21 @@ two agree to ~1e-7 — an atlas in the differential-geometry sense: two charts o
 **Stage 0** is a wiring gate — with the gate at zero, Aeon must reproduce the untouched R1
 backbone, verified to ~1e-6 in fp32.
 
-**Verified.** With `torch` 2.13 and `transformers` 4.46 installed in this container, the
-full suite passes — **8 passed** — as does `recursion.py`'s own self-test. The self-test
-now also asserts the joint-map certificate, and prints `sigma(J)` when it exceeds 1: after
-50 training steps it reaches **1.36** while the per-matrix charts stay green, which is
-precisely the drift the older assertions could not see.
+**Verified.** Environment, from `pip freeze`:
+
+```
+python 3.11.15 · torch==2.13.0 (2.13.0+cu130) · transformers==4.46.3 · pytest==9.1.1
+```
+
+(The older `transformers` alongside a current `torch` is forced by this project's own pin,
+`transformers>=4.43,<4.47` in `pyproject.toml` — worth revisiting.)
+
+On that environment the full suite passes — **9 passed** — as does `recursion.py`'s
+self-test. The self-test asserts the joint-map certificate at init *and* after training,
+and prints `σ(J)` when it exceeds 1: after 50 training steps it reaches **1.36** while the
+per-matrix charts stay green. That is the drift the older assertions structurally could not
+see, and the training loops in `scripts/` now log `λ`, `σ(J)`, `ρ(J)` and `‖J‖_P` every
+audit step with a pre-declared abort at `ρ(J) ≥ 0.99`.
 
 ## Notebooks
 

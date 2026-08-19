@@ -111,7 +111,26 @@ def main():
                 print(f"  audit: sigma(Wh)={a['chart_A_sigma_Wh']:.4f}  "
                       f"sigma(Wc)={a['chart_A_sigma_Wc']:.4f}  "
                       f"holds={a['chart_A_holds']}")
+                # Joint map. Charts A/B/C bound W_h and W_c and stay green while
+                # the joint operator drifts -- in the reference self-test 50 steps
+                # took sigma(J) from 0.97 to 1.36 with chart_A still True. These
+                # are the numbers that actually move.
+                print(f"  joint: lam={a['lambda']:.4f}  "
+                      f"sigma(J)={a['chart_D_sigma_J']:.4f}  "
+                      f"rho(J)={a['chart_D_rho_J']:.4f}  "
+                      f"||J||_P={a['chart_D_norm_P']:.4f}  "
+                      f"sampled_max_sigma={a['chart_D_sampled_max_sigma']:.4f}")
                 assert a['chart_A_holds'], "Certificate violated during training!"
+                # ABORT CONDITION, declared before the run rather than after it
+                # fails. rho(J) >= RHO_ABORT means the joint map is no longer
+                # asymptotically stable and the P-metric certificate is void.
+                RHO_ABORT = 0.99
+                assert a['chart_D_rho_J'] < RHO_ABORT, (
+                    f"rho(J)={a['chart_D_rho_J']:.4f} >= {RHO_ABORT} at step {step}: "
+                    "joint map no longer contracting, aborting")
+                assert a['chart_D_dlyap_solver_ok'], (
+                    "dlyap solver failed to reach its target; P-metric result "
+                    "for this step is not trustworthy")
             if step > 0 and step % args.save_every == 0:
                 os.makedirs(args.out, exist_ok=True)
                 model.save_pretrained(args.out)

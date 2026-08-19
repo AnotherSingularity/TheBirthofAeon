@@ -39,3 +39,41 @@ def test_certificate_survives_training():
     aud = audit_certificates(cell)
     assert aud["chart_A_holds"], "Training broke sigma bound"
     assert aud["chart_C_lyapunov_holds"], "Training broke Lyapunov LMI"
+
+
+def test_origin_is_not_worst_case_over_d2():
+    """
+    Regression pin for the claim that the origin is the worst-case state.
+
+    It is not. D1 (the outer tanh derivative) factors out on the left and can
+    only reduce sigma, but D2 sits inside the block (W_h + lam*D2*W_c), where
+    shrinking it can ENLARGE that block through cancellation.
+
+    With W_h and W_c adversarially aligned, sigma is non-monotonic in d2 and
+    the value at d2 -> 0 exceeds the value at the origin. If this test ever
+    fails, the counterexample has been invalidated -- do not "fix" it by
+    relaxing the assert; re-derive it.
+    """
+    import torch
+    from aeon.recursion import RecursionChartB, joint_jacobian_general
+
+    torch.manual_seed(0)
+    H, lam = 32, 0.7
+    cell = RecursionChartB(in_dim=4, H=H)
+    Wc = cell.W_c_mat().detach().double()
+    Wh = -1.2 * lam * Wc                       # adversarial alignment
+    ones = torch.ones(H, dtype=torch.float64)
+
+    def sigma(d2_scalar):
+        d2 = d2_scalar * ones
+        J = joint_jacobian_general(Wh, Wc, lam, ones, d2)
+        return float(torch.linalg.svdvals(J)[0])
+
+    s_origin = sigma(1.0)
+    s_small = sigma(0.01)
+
+    assert s_small > s_origin, (
+        f"origin ({s_origin:.4f}) should NOT be the max; "
+        f"d2=0.01 gives {s_small:.4f}"
+    )
+    assert sigma(0.5) < s_origin, "sigma should dip before rising (non-monotonic in d2)"
