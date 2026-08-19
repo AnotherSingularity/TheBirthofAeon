@@ -85,43 +85,73 @@ ratio*, 1.618. The `phi` of the VRU architecture is `4/pi`, 1.273. Same letter, 
 number — and reading the two bodies of work together, this is the easiest thing to trip
 over.
 
-The code bridges them explicitly, in one line:
+Document 1 resolves part of this: within the field system it *defines* `phi_classical`
+as `4/pi`, so the architecture is internally consistent even though the January papers use
+1.618 under the same letter.
+
+A second thread connects them. The code carries a constant that is never mentioned in any
+document:
 
 ```python
-DELTA_STAR = math.log((1.6180 - 1.0) / (PHI_CL - 1.0))    # = 0.81614
+DELTA_STAR = math.log((1.6180 - 1.0) / (PHI_CL - 1.0))    # = 0.816140
 ```
 
-Under the dynamic-phi form `f(Δ) = 1 + (C - 1)e^(-Δ)`, starting from the classical golden
-ratio `C = 1.618`, the value at `Δ = DELTA_STAR` is `4/pi` exactly — it reproduces to
-machine precision. `DELTA_STAR` is the folding factor at which the golden ratio's own
-curve passes through the architecture's constant. Whether that is derivation or
-coincidence is left to the reader; the archive records that the two are connected in the
-source by a single line, and that the later documents never revisit it.
+Under the dynamic-phi form `f(Δ) = 1 + (C - 1)e^(-Δ)`, starting from the *golden ratio*
+`C = 1.618`, the value at `Δ = DELTA_STAR` is `4/pi` exactly, to machine precision. Document
+1 independently identifies a critical point `D* ≈ 0.816` — described there as the peak of
+the `Omega` product function, located by gradient ascent — and states that the cell operates
+at that transition. The two numbers agree to three decimal places by quite different routes.
 
 ### `docs/vru-architecture/` — the core research
 
-Documents 1–9, of which **5 through 9 are present**. Document 6 records the rename from
-DPPU to VRU; documents 1–5 used the DPPU designation. Document 9 names a Document 10 as
-planned but not yet written.
+Documents **1–9, complete**. Document 6 records the rename from DPPU to VRU; documents
+1–5 used the DPPU designation. Document 9 names a Document 10 as planned but not yet
+written.
 
 | # | Document | What it does |
 |---|---|---|
-| 05 | Extreme Sequence Stress Test | seq_len 5,000 full BPTT, three-way comparison |
-| 06 | Comprehensive GPU Experiment | Four tasks, three models, RTX 5090, to 15,000 timesteps |
+| 01 | Origin | Derives `phi = 4/pi` from Vitruvian dual-centre geometry |
+| 02 | Mathematical Formalization | The cell definition, parameter counts, four falsifiable conjectures |
+| 03 | Progress v2 | Experiments v2–v5, sine wave, seq_len 200 → 3,000 |
+| 04 | LSTM Comparison | v6 three-way comparison |
+| 05 | Extreme Sequence Stress Test | seq_len 5,000 full BPTT |
+| 06 | Comprehensive GPU Experiment | Four tasks, RTX 5090, to 15,000 timesteps |
 | 07 | Why It Works | Spectral probing of `W_h` — the geometric attractor explanation |
 | 08 | The Probe Journey | Five probes attempting to prove document 7's claim |
 | 09 | The Arithmetic Benchmark | Carry propagation, and where the mechanism stops working |
 | — | Architecture Diagram | One-page cell diagram: fields, gate, anchor, carry state |
 
-**Missing: documents 1–4.** Per the series listings in documents 5 and 9, those are
-1 Origin (the derivation of phi from Da Vinci's geometry), 2 Mathematical formalization,
-3 RNN experiments v2–v5, and 4 the LSTM comparison. The two listings disagree slightly on
-document 2 — document 5 calls it "v1 LaTeX", document 9 calls it "Field Simulation" —
-which is preserved here rather than reconciled.
+**The derivation** (document 1): normalize the Vitruvian circumscribed circle to radius
+`r = 1`. The inscribed square's side is `s = pi/2`, so its half-side is `pi/4`. Then
 
-Read in order, these get **less** conclusive, deliberately, and that is the most
+```
+phi = r / (pi/4) = 4/pi = 1.273239544735163
+```
+
+Document 1 is explicit that this "is not the golden ratio (1.618...) nor any standard
+mathematical constant" — it is the circle-to-square proportion of the figure, offered as
+the boundary between oscillatory and rectilinear dynamics.
+
+**The cell** (document 2) is one scalar away from a standard Elman RNN:
+
+```
+Elman:  h_t = tanh( W_x·x_t +       W_h·h_{t-1} + b )
+DPPU:   h_t = tanh( W_x·x_t + phi · W_h·h_{t-1} + b )
+```
+
+`phi` is fixed, not learned — no gate, no normalization layer, **zero added parameters**.
+At hidden=32 both DPPU and vanilla have 1,121 parameters against LSTM's 4,513. Document 2
+then states four falsifiable conjectures, and documents 3–9 test them in order.
+
+Read in order, these get **less** conclusiveRead in order, these get **less** conclusive, deliberately, and that is the most
 interesting thing about them:
 
+- **03** finds no advantage at all at seq_len 200, then a 1.57x gradient advantage at
+  1,000 that compounds toward 3,000 — the null result at short length is reported as
+  readily as the positive one.
+- **04** reports DPPU beating LSTM by 3.7x on final loss at 3.7x fewer parameters, and
+  scopes it immediately: the task is a smooth sine wave, and LSTM keeps its advantage
+  where "selective gating is essential."
 - **05** reports DPPU-RNN reaching the lowest final loss of the three architectures
   (0.000029 against LSTM's 0.000080) at 4x fewer parameters — then notes the sine-wave
   task is "too smooth to fully stress-test" the claim, and proposes harder ones.
@@ -230,8 +260,8 @@ Partial upload; further batches of source material are still to come.
 
 - `docs/foundations/` — five origin papers
 - `docs/vru-trading-bot/` — complete (1–6)
-- `docs/vru-architecture/` — documents 5–9 of 9; **1–4 not yet uploaded**, and a
-  document 10 (VRU v11 scratchpad results) is named as planned but not yet written
+- `docs/vru-architecture/` — **complete (1–9)**; a document 10 (VRU v11 scratchpad
+  results) is named as planned but not yet written
 
 ## Authorship
 
