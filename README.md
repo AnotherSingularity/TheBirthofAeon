@@ -35,6 +35,7 @@ keeps circling. It is not settled here, and the documents say so.
 | [`runs/dppu_vru/`](./runs/dppu_vru) | Training logs, checkpoints and metadata for runs **v17–v23**. |
 | [`docs/vru-architecture/`](./docs/vru-architecture) | The core research series — what the architecture is and why it works. |
 | [`docs/vru-trading-bot/`](./docs/vru-trading-bot) | A complete six-part series applying it to markets. |
+| [`raw/`](./raw) | Verbatim source dumps that are not notebooks. |
 
 ## Documents
 
@@ -43,33 +44,47 @@ in different folders.
 
 ### `docs/vru-architecture/` — the core research
 
-Documents 1–8, of which **6, 7 and 8 are present**. Document 6 records the rename from
-DPPU to VRU; documents 1–5 used the DPPU designation. Per document 6, the missing entries
-are: 1 Origin (Da Vinci geometry, derivation of phi), 2 Mathematical formalization,
-3 RNN experiments v2–v5, 4 LSTM comparison, 5 Stress test at seq_len 5,000.
+Documents 1–9, of which **5 through 9 are present**. Document 6 records the rename from
+DPPU to VRU; documents 1–5 used the DPPU designation. Document 9 names a Document 10 as
+planned but not yet written.
 
 | # | Document | What it does |
 |---|---|---|
-| 06 | Comprehensive GPU Experiment | Four tasks, three models, RTX 5090, sequences to 15,000 timesteps |
+| 05 | Extreme Sequence Stress Test | seq_len 5,000 full BPTT, three-way comparison |
+| 06 | Comprehensive GPU Experiment | Four tasks, three models, RTX 5090, to 15,000 timesteps |
 | 07 | Why It Works | Spectral probing of `W_h` — the geometric attractor explanation |
 | 08 | The Probe Journey | Five probes attempting to prove document 7's claim |
+| 09 | The Arithmetic Benchmark | Carry propagation, and where the mechanism stops working |
 | — | Architecture Diagram | One-page cell diagram: fields, gate, anchor, carry state |
 
-These three are worth reading in order, because they get **less** conclusive as they go,
-deliberately:
+**Missing: documents 1–4.** Per the series listings in documents 5 and 9, those are
+1 Origin (the derivation of phi from Da Vinci's geometry), 2 Mathematical formalization,
+3 RNN experiments v2–v5, and 4 the LSTM comparison. The two listings disagree slightly on
+document 2 — document 5 calls it "v1 LaTeX", document 9 calls it "Field Simulation" —
+which is preserved here rather than reconciled.
 
-- **06** reports the headline result — a consistent 2x loss advantage over a vanilla RNN
-  at extreme sequence length — then immediately undercuts it: a vanilla RNN *also* stayed
-  stable at 15,000 timesteps, "unexpected based on conventional gradient theory," raising
-  the question of whether gradient clipping alone explains the stability.
-- **07** answers with a mechanism: `phi` drives `W_h` toward a spectral radius of
-  `2/pi`, putting the effective recurrent scaling at `phi²/2 = 8/pi² ≈ 0.8106` — a
-  contractive fixed point below 1.0.
-- **08** then tries to prove that identity across five probes and **fails**. It says so in
-  its own opening line: "A clean closed-form proof was not found." What survives is a
-  weaker, broader claim — `phi` insulates the spectral radius from activation drift, with
-  VRU drifting 7x less than vanilla. The document argues this is the stronger position
-  precisely because it is more modest.
+Read in order, these get **less** conclusive, deliberately, and that is the most
+interesting thing about them:
+
+- **05** reports DPPU-RNN reaching the lowest final loss of the three architectures
+  (0.000029 against LSTM's 0.000080) at 4x fewer parameters — then notes the sine-wave
+  task is "too smooth to fully stress-test" the claim, and proposes harder ones.
+- **06** delivers those harder tasks and a 2x loss advantage at extreme sequence length,
+  then immediately undercuts it: a vanilla RNN *also* stayed stable at 15,000 timesteps,
+  "unexpected based on conventional gradient theory," raising whether gradient clipping
+  alone explains it.
+- **07** answers with a mechanism: phi drives `W_h` toward a spectral radius of `2/pi`,
+  putting effective recurrent scaling at `phi²/2 = 8/pi² ≈ 0.8106` — a contractive fixed
+  point below 1.0.
+- **08** tries to prove that identity across five probes and **fails**, saying so in its
+  opening line: "A clean closed-form proof was not found." What survives is weaker and
+  broader — phi insulates the spectral radius from activation drift, VRU drifting 7x less
+  than vanilla. The document argues this is the stronger position for being more modest.
+- **09** then finds the mechanism's boundary. On multi-digit arithmetic the model plateaus
+  at 50–66% accuracy, and a carry probe reads **0% throughout training** — it never learns
+  carry as a general algorithm. The conclusion is a limit, stated plainly: phi's spectral
+  insulation "provides continuous memory stability but cannot substitute for discrete
+  symbolic working memory."
 
 ### `docs/vru-trading-bot/` — the application (complete, 1–6)
 
@@ -134,6 +149,15 @@ They will not run unmodified outside that environment.
 [`notebooks/exports/`](./notebooks/exports) holds PDF exports of notebooks that also exist
 in source form.
 
+## Raw dumps (`raw/`)
+
+`HZ.txt` is an email-to-self from March 2026 containing a working DPPU-VRU **v13** core —
+constants, tokenizer, `DPPUCell`, `VRUModel`, training loop — followed by a conversation
+summary that ends mid-thread. It is the clearest plain-source statement of the geometry in
+the archive, and it is kept whole because the mixture of code and thinking is what the file
+actually is. A Gmail header carrying a personal email address was removed; see
+[`raw/README.md`](./raw/README.md).
+
 ## Training runs (`runs/dppu_vru/`)
 
 `v17` through `v23`, each with a `_log.txt`; several with `_meta.json` (step, curriculum
@@ -149,7 +173,8 @@ in, at "Stage 1: single-digit no carry".
 Partial upload; further batches of source material are still to come.
 
 - `docs/vru-trading-bot/` — complete (1–6)
-- `docs/vru-architecture/` — documents 6, 7, 8 of 8; **1–5 not yet uploaded**
+- `docs/vru-architecture/` — documents 5–9 of 9; **1–4 not yet uploaded**, and a
+  document 10 (VRU v11 scratchpad results) is named as planned but not yet written
 
 ## License
 
