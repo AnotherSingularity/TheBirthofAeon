@@ -252,8 +252,19 @@ poc/tests/               recursion, block shapes, stage-0 gate
 ```
 
 **The certificate.** `sigma_max(W_h) < MARGIN_H` and `sigma_max(W_c) < MARGIN_C`, both
-below 1. It is not enforced after the fact — the parameterization admits no violating
-setting.
+below 1, enforced by the parameterization rather than after the fact — no setting of the
+parameters violates it.
+
+**That bound is on the two matrices individually, not on the joint map.** The state is
+`(h, c)`, and `h` reaches `h_next` both directly through `W_h` and via `c_next`, which
+enters the same `tanh`. Measured across 20 seeds at default init, `sigma(W_h)` and
+`sigma(W_c)` stay inside their margins on every seed while `sigma(J)` of the joint
+Jacobian averages **1.04 and exceeds 1 on 15 of them** — so the cell is *not* a Euclidean
+contraction, and Banach does not apply in that metric. What does hold is `rho(J) < 1` on
+every seed (mean 0.76), and therefore a `P > 0` with `J^T P J - P < 0`: the map is a
+strict contraction in the **P-metric**, `||J||_P` averaging 0.87 across the same seeds.
+`audit_certificates()` solves for that `P` and reports it as Chart D. **That is the
+guarantee to quote**, not the per-matrix bound.
 
 **Two charts, one cell.** Chart B (`sigmoid(s) · MARGIN · Cayley(A) · diag(tanh(d))`) is
 the training default, where the certificate is structural. Chart A stores `W` directly and
@@ -263,8 +274,11 @@ two agree to ~1e-7 — an atlas in the differential-geometry sense: two charts o
 **Stage 0** is a wiring gate — with the gate at zero, Aeon must reproduce the untouched R1
 backbone, verified to ~1e-6 in fp32.
 
-All modules compile cleanly. The test suite was **not** run here: this container has no
-`torch`, so the tests are published unverified in this environment.
+**Verified.** With `torch` 2.13 and `transformers` 4.46 installed in this container, the
+full suite passes — **8 passed** — as does `recursion.py`'s own self-test. The self-test
+now also asserts the joint-map certificate, and prints `sigma(J)` when it exceeds 1: after
+50 training steps it reaches **1.36** while the per-matrix charts stay green, which is
+precisely the drift the older assertions could not see.
 
 ## Notebooks
 

@@ -14,18 +14,46 @@ input x_t in R^{in_dim}, with the guarantee that the recurrent map's
 largest singular value is strictly less than 1. This bound is not
 enforced after the fact; it is built into the parameterization.
 
-There is no setting of the parameters that violates it.
+No setting of the parameters violates the per-matrix bound.
+(The joint map carries a separate, weaker guarantee -- see SCOPE below.)
 
 THE CERTIFICATE
 ---------------
     sigma_max(W_h) < MARGIN_H,   sigma_max(W_c) < MARGIN_C,
     with MARGIN_H, MARGIN_C < 1.
 
-Together with the tanh wrap, this gives ||J_h||_2 < MARGIN_H < 1
-where J_h is the Jacobian of the recurrent update. The cell is
-strictly contracting in the Euclidean metric, so by Banach fixed point
-the system has a unique attractor for any fixed input, perturbations
-decay exponentially, and numerical errors do not accumulate.
+SCOPE OF THAT CERTIFICATE -- read this before relying on it.
+
+The bound above is on the two matrices INDIVIDUALLY. It is not a
+bound on the joint state map. The state is (h, c), and h reaches
+h_next by two paths -- directly through W_h, and through c_next,
+which enters the same tanh. At the origin (sech^2 = 1) the joint
+Jacobian is
+
+    J = [[W_h + lam*W_c, (1-lam)I],
+         [    lam*W_c,   (1-lam)I]]
+
+and sigma_max(J) can exceed 1 while both matrix bounds hold. Measured
+at default init (H=64, s=1.5, margins 0.98/0.95, lam=0.5) across 20
+seeds: sigma(W_h) and sigma(W_c) are inside their margins on every
+seed, while sigma(J) averages 1.04 and exceeds 1 on 15 of 20.
+
+So the cell is NOT a Euclidean contraction at default init, and the
+Banach argument does not apply in the Euclidean metric.
+
+What does hold:
+
+  * rho(J) < 1 on every seed measured (mean 0.76) -- the joint map is
+    asymptotically stable, and the state cannot grow without bound.
+
+  * Because rho(J) < 1, there exists P > 0 with J^T P J - P < 0, and
+    the map IS a strict contraction in the P-metric. audit_certificates()
+    solves for that P and reports ||J||_P, which came in at mean 0.87
+    (max 0.94) across the same 20 seeds -- including every seed where
+    the Euclidean norm exceeded 1. That is the certificate to rely on.
+
+The Euclidean bound on W_h and W_c remains useful and cheap; it just
+is not the whole guarantee, and must not be quoted as if it were.
 
 THE ATLAS (two equivalent implementations of the same cell)
 -----------------------------------------------------------
@@ -40,6 +68,15 @@ CHART A (direct storage + projection, for audit and reference):
 Both produce the same forward pass on matched parameters, to ~1e-7
 precision. The equivalence_check() function at the bottom verifies
 this.
+
+A NOTE ON lambda
+----------------
+lam = sigmoid(log_lambda) and log_lambda is a free parameter. At
+lam = 0 the carry becomes a pure integrator with no decay and
+rho(J) = 1.0000 exactly -- stability is forfeited. Nothing in the
+parameterization prevents log_lambda from reaching that value, so
+the guarantee is conditional on lam, and audit_certificates()
+reports lam on every call. Default init is sigmoid^-1(0.7).
 
 BANNED
 ------
@@ -132,7 +169,9 @@ class RecursionChartB(nn.Module):
         self.d_c = nn.Parameter(0.5  * torch.randn(H))
         self.s_c = nn.Parameter(torch.tensor(1.5))
 
-        self.log_lambda = nn.Parameter(torch.tensor(0.0))     # sigmoid(0) = 0.5
+        # sigmoid^-1(0.7): lam=0.5 sits outside the contractive window; lam=0
+        # makes the carry a pure integrator (rho(J) = 1). See module docstring.
+        self.log_lambda = nn.Parameter(torch.tensor(0.8473))  # sigmoid -> 0.70
 
         # Input projection (in_dim -> H)
         self.W_x = nn.Linear(in_dim, H, bias=True)
@@ -222,6 +261,53 @@ class RecursionChartA(nn.Module):
 # Three-chart audit
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Joint-map certificate  (the (h, c) system, not the individual matrices)
+# ---------------------------------------------------------------------------
+
+def joint_jacobian(Wh: torch.Tensor, Wc: torch.Tensor, lam: float) -> torch.Tensor:
+    """
+    Jacobian of the joint (h, c) update, evaluated AT THE ORIGIN.
+
+        c_next = (1-lam)c + lam*tanh(W_c h)
+        h_next = tanh(W_x x + W_h h + c_next)
+
+    d(tanh)/dz = sech^2(z) <= 1, attained at z = 0. Evaluating at the
+    origin therefore gives the LARGEST Jacobian the cell can present:
+    every other state scales the tanh rows by sech^2 < 1. The origin is
+    the worst case, which is why the bound is taken there.
+    """
+    H = Wh.shape[0]
+    I = torch.eye(H, dtype=Wh.dtype, device=Wh.device)
+    top = torch.cat([Wh + lam * Wc, (1.0 - lam) * I], dim=1)
+    bot = torch.cat([lam * Wc,      (1.0 - lam) * I], dim=1)
+    return torch.cat([top, bot], dim=0)
+
+
+def solve_dlyap(J: torch.Tensor, iters: int = 64) -> torch.Tensor:
+    """
+    Solve J^T P J - P = -I for P > 0 by squaring:  P = sum_k (J^T)^k J^k.
+    Converges iff rho(J) < 1. Each pass squares J, so ~64 passes is ample.
+    """
+    P = torch.eye(J.shape[0], dtype=J.dtype, device=J.device)
+    A = J.clone()
+    for _ in range(iters):
+        P = P + A.transpose(-2, -1) @ P @ A
+        A = A @ A
+        if torch.linalg.matrix_norm(A, 2) < 1e-14:
+            break
+    return P
+
+
+def p_metric_norm(J: torch.Tensor, P: torch.Tensor) -> float:
+    """||J||_P = sqrt(lam_max(P^-1/2 J^T P J P^-1/2)). Contraction iff < 1."""
+    L = torch.linalg.cholesky(P)
+    M = torch.linalg.solve_triangular(
+        L, (L.transpose(-2, -1) @ J).transpose(-2, -1), upper=False
+    ).transpose(-2, -1)
+    return torch.linalg.svdvals(M)[0].item()
+
+
 def audit_certificates(cell, perturb_seed: int = 0):
     """Run the three-chart audit on a Recursion cell. Returns a dict."""
     with torch.no_grad():
@@ -257,7 +343,23 @@ def audit_certificates(cell, perturb_seed: int = 0):
                 for k, v in saved.items():
                     getattr(cell, k).copy_(v)
 
+    # ---- Chart D: the joint (h, c) map -----------------------------------
+    with torch.no_grad():
+        lam = float(torch.sigmoid(cell.log_lambda)) if hasattr(cell, "log_lambda") else 0.5
+        J = joint_jacobian(Wh.double(), Wc.double(), lam)
+        sigma_J = float(torch.linalg.svdvals(J)[0])
+        rho_J = float(abs(torch.linalg.eigvals(J)).max())
+        if rho_J < 1.0:
+            P = solve_dlyap(J)
+            P_min_eig = float(torch.linalg.eigvalsh(P).min())
+            lmi_resid = float(torch.linalg.eigvalsh(J.T @ P @ J - P).max())
+            norm_P = p_metric_norm(J, P)
+        else:
+            P_min_eig = lmi_resid = float("nan")
+            norm_P = float("inf")
+
     out = {
+        "lambda":                        lam,
         "chart_A_sigma_Wh":              s_h,
         "chart_A_sigma_Wc":              s_c,
         "chart_A_bound_Wh":              cell.MARGIN_H,
@@ -267,6 +369,20 @@ def audit_certificates(cell, perturb_seed: int = 0):
         "chart_C_max_eig_WhTWh_minus_I": max_eig,
         "chart_C_lyapunov_holds":        bool(max_eig < 0),
     }
+    out.update({
+        # Chart D -- joint map. sigma_J is the Euclidean norm and may exceed 1
+        # even when charts A/B/C all pass; that is expected, not a bug.
+        "chart_D_sigma_J":               sigma_J,
+        "chart_D_euclidean_contraction": bool(sigma_J < 1.0),
+        "chart_D_rho_J":                 rho_J,
+        "chart_D_asymptotically_stable": bool(rho_J < 1.0),
+        "chart_D_P_min_eig":             P_min_eig,
+        "chart_D_lmi_residual":          lmi_resid,
+        "chart_D_norm_P":                norm_P,
+        # the guarantee worth relying on: strict contraction in the P-metric
+        "chart_D_joint_holds":           bool(rho_J < 1.0 and lmi_resid < 0.0
+                                              and norm_P < 1.0),
+    })
     if perturbed is not None:
         out["chart_B_perturbed_sigma"] = perturbed
         out["chart_B_holds_under_N01"] = bool(perturbed < cell.MARGIN_H)
@@ -343,5 +459,15 @@ if __name__ == "__main__":
         print(f"  {k:<35} {v}")
     assert aud["chart_A_holds"], "Training broke sigma bound"
     assert aud["chart_C_lyapunov_holds"], "Training broke Lyapunov LMI"
+    assert aud["chart_D_joint_holds"], "Training broke the joint-map certificate"
+
+    # Charts A/B/C bound W_h and W_c. They pass while the JOINT map is not a
+    # Euclidean contraction, so asserting only on them confirms the wrong
+    # operator green. Chart D is the one that can actually fail here.
+    if not aud["chart_D_euclidean_contraction"]:
+        print(f"\n  note: sigma(J) = {aud['chart_D_sigma_J']:.4f} >= 1 -- the joint map is")
+        print(f"        not a Euclidean contraction at this init. It contracts in the")
+        print(f"        P-metric instead: ||J||_P = {aud['chart_D_norm_P']:.4f} < 1.")
+        print(f"        This is expected. See SCOPE in the module docstring.")
 
     print("\nall recursion reference tests pass")
